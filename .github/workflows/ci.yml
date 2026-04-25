@@ -16,21 +16,21 @@ jobs:
       # Step 2: Backend setup
       - name: Install backend dependencies
         run: |
-          cd backend
+          cd server
           npm install
 
       - name: Run backend tests
         run: |
-          cd backend
+          cd server
           npm test || echo "No tests yet"
 
       # Step 3: Frontend setup
       - name: Install frontend dependencies
         run: |
-          cd frontend
+          cd client
           npm install
 
       - name: Build frontend
         run: |
-          cd frontend
+          cd client
           npm run build
