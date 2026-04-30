@@ -6,6 +6,13 @@ import { generateAccessToken } from "../utils/generateToken.js";
 export const registerCompany = async (data) => {
   const { companyName, name, email, password } = data;
 
+  const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      const error = new Error("Email already exists");
+      error.statusCode = 400;
+      throw error;
+    }
+
   const company = await Company.create({ name: companyName });
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -24,11 +31,19 @@ export const registerCompany = async (data) => {
 export const login = async ({ email, password }) => {
   const user = await User.findOne({ email });
 
-  if (!user) throw new Error("Invalid credentials");
+  if (!user) {
+    const error = new Error("Invalid credentials");
+    error.statusCode = 400;
+    throw error;
+  }
 
   const isMatch = await bcrypt.compare(password, user.password);
 
-  if (!isMatch) throw new Error("Invalid credentials");
+  if (!isMatch) {
+    const error = new Error("Invalid credentials");
+    error.statusCode = 400;
+    throw error;
+  }
 
   const token = generateAccessToken({
     id: user._id,
