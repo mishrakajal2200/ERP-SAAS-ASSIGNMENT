@@ -45,40 +45,78 @@ export const registerCompany = async (data) => {
   };
 };
 
+// export const login = async ({ email, password }) => {
+
+//   const user = await User.findOne({ email })
+//     .select("+password");
+
+//   console.log("USER:", user);
+
+//   if (!user) {
+//     throw new Error("Invalid credentials");
+//   }
+
+//   console.log("PASSWORD FROM BODY:", password);
+//   console.log("PASSWORD FROM DB:", user.password);
+
+//   const isMatch = await bcrypt.compare(
+//     password,
+//     user.password
+//   );
+
+//   if (!isMatch) {
+//     throw new Error("Invalid credentials");
+//   }
+
+//   const token = generateAccessToken({
+//     id: user._id,
+//     role: user.role,
+//     companyId: user.companyId,
+//   });
+
+//   const userObj = user.toObject();
+
+//   delete userObj.password;
+
+//   return {
+//     token,
+//     user: userObj,
+//   };
+// };
+
 export const login = async ({ email, password }) => {
 
   console.log("EMAIL:", email);
   console.log("PASSWORD:", password);
-  // ✅ INCLUDE PASSWORD
+
   const user = await User.findOne({ email })
     .select("+password");
 
-    console.log("USER:", user);
-
-  console.log("DB PASSWORD:", user.password);
+  console.log("USER FOUND:", user);
 
   if (!user) {
     throw new Error("Invalid credentials");
   }
 
-  // ✅ CHECK PASSWORD
+  console.log("DB PASSWORD:", user.password);
+
   const isMatch = await bcrypt.compare(
     password,
     user.password
   );
 
+  console.log("PASSWORD MATCH:", isMatch);
+
   if (!isMatch) {
     throw new Error("Invalid credentials");
   }
 
-  // ✅ GENERATE TOKEN
   const token = generateAccessToken({
     id: user._id,
     role: user.role,
     companyId: user.companyId,
   });
 
-  // ✅ REMOVE PASSWORD
   const userObj = user.toObject();
 
   delete userObj.password;
