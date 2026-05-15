@@ -29,20 +29,16 @@ export const registerCompany = async (data) => {
 };
 
 export const login = async ({ email, password }) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("-password");
 
   if (!user) {
-    const error = new Error("Invalid credentials");
-    error.statusCode = 400;
-    throw error;
+    throw new Error("Invalid credentials");
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
-    const error = new Error("Invalid credentials");
-    error.statusCode = 400;
-    throw error;
+    throw new Error("Invalid credentials");
   }
 
   const token = generateAccessToken({
@@ -51,7 +47,17 @@ export const login = async ({ email, password }) => {
     companyId: user.companyId,
   });
 
-  return { token, user };
+  // ✅ convert to plain object
+  const userObj = user.toObject();
+
+  // ✅ remove password
+  delete userObj.password;
+
+  // ✅ IMPORTANT: return BOTH
+  return {
+    token,
+    user: userObj,
+  };
 };
 
 export const getMe = async (userId) => {
