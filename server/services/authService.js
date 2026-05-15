@@ -7,16 +7,25 @@ export const registerCompany = async (data) => {
   const { companyName, name, email, password } = data;
 
   const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      const error = new Error("Email already exists");
-      error.statusCode = 400;
-      throw error;
-    }
 
-  const company = await Company.create({ name: companyName });
+  if (existingUser) {
+    const error = new Error("Email already exists");
+    error.statusCode = 400;
+    throw error;
+  }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // CREATE COMPANY
+  const company = await Company.create({
+    name: companyName,
+  });
 
+  // HASH PASSWORD
+  const hashedPassword = await bcrypt.hash(
+    password,
+    10
+  );
+
+  // CREATE USER
   const user = await User.create({
     name,
     email,
@@ -25,18 +34,34 @@ export const registerCompany = async (data) => {
     companyId: company._id,
   });
 
-  return { company, user };
+  // REMOVE PASSWORD
+  const userObj = user.toObject();
+
+  delete userObj.password;
+
+  return {
+    company,
+    user: userObj,
+  };
 };
 
 export const login = async ({ email, password }) => {
-  // FIND USER
-  const user = await User.findOne({ email });
+
+  console.log("EMAIL:", email);
+  console.log("PASSWORD:", password);
+  // ✅ INCLUDE PASSWORD
+  const user = await User.findOne({ email })
+    .select("+password");
+
+    console.log("USER:", user);
+
+  console.log("DB PASSWORD:", user.password);
 
   if (!user) {
     throw new Error("Invalid credentials");
   }
 
-  // CHECK PASSWORD
+  // ✅ CHECK PASSWORD
   const isMatch = await bcrypt.compare(
     password,
     user.password
@@ -46,17 +71,16 @@ export const login = async ({ email, password }) => {
     throw new Error("Invalid credentials");
   }
 
-  // GENERATE TOKEN
+  // ✅ GENERATE TOKEN
   const token = generateAccessToken({
     id: user._id,
     role: user.role,
     companyId: user.companyId,
   });
 
-  // CONVERT TO OBJECT
+  // ✅ REMOVE PASSWORD
   const userObj = user.toObject();
 
-  // REMOVE PASSWORD BEFORE SENDING
   delete userObj.password;
 
   return {
