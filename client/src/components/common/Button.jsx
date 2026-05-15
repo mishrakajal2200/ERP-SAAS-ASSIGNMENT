@@ -1,33 +1,29 @@
-import { Button as MuiButton } from "@mui/material";
+// src/components/common/Button.jsx
 
 const Button = ({
   children,
-  variant = "contained",
-  color = "primary",
   onClick,
   type = "button",
-  fullWidth = false,
-  loading = false,
-  ...props
+  className = "",
+  variant = "primary",
 }) => {
+  const base =
+    "px-4 py-2 rounded-lg font-medium transition backdrop-blur";
+
+  const variants = {
+    primary: "bg-indigo-600 text-white hover:bg-indigo-700",
+    secondary: "bg-white/20 text-white hover:bg-white/30",
+    danger: "bg-red-500 text-white hover:bg-red-600",
+  };
+
   return (
-    <MuiButton
-      variant={variant}
-      color={color}
-      onClick={onClick}
+    <button
       type={type}
-      fullWidth={fullWidth}
-      disabled={loading}
-      sx={{
-        textTransform: "none",
-        borderRadius: "8px",
-        fontWeight: 600,
-        padding: "10px 16px",
-      }}
-      {...props}
+      onClick={onClick}
+      className={`${base} ${variants[variant]} ${className}`}
     >
-      {loading ? "Loading..." : children}
-    </MuiButton>
+      {children}
+    </button>
   );
 };
 

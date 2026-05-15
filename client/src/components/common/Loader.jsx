@@ -1,17 +1,10 @@
-import { CircularProgress, Box } from "@mui/material";
+// src/components/common/Loader.jsx
 
-const Loader = ({ fullScreen = false }) => {
+const Loader = () => {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: fullScreen ? "100vh" : "100%",
-      }}
-    >
-      <CircularProgress />
-    </Box>
+    <div className="flex justify-center items-center h-40">
+      <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
   );
 };
 

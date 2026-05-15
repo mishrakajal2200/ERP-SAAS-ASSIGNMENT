@@ -1,29 +1,10 @@
-import { Card as MuiCard, CardContent, Typography } from "@mui/material";
+// src/components/ui/Card.jsx
 
-const Card = ({ title, value, children }) => {
+const Card = ({ children }) => {
   return (
-    <MuiCard
-      sx={{
-        borderRadius: "12px",
-        boxShadow: 3,
-      }}
-    >
-      <CardContent>
-        {title && (
-          <Typography variant="subtitle2" color="text.secondary">
-            {title}
-          </Typography>
-        )}
-
-        {value && (
-          <Typography variant="h5" fontWeight="bold">
-            {value}
-          </Typography>
-        )}
-
-        {children}
-      </CardContent>
-    </MuiCard>
+    <div className="bg-white/30 backdrop-blur-lg p-5 rounded-xl shadow">
+      {children}
+    </div>
   );
 };
 

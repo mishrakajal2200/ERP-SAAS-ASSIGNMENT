@@ -1,19 +1,20 @@
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from "@mui/material";
+// src/components/common/Modal.jsx
 
-const Modal = ({ open, onClose, title, children, actions }) => {
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      {title && <DialogTitle>{title}</DialogTitle>}
-
-      <DialogContent>{children}</DialogContent>
-
-      {actions && <DialogActions>{actions}</DialogActions>}
-    </Dialog>
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white/30 backdrop-blur-lg p-6 rounded-xl w-full max-w-md">
+        <button
+          onClick={onClose}
+          className="float-right text-gray-600"
+        >
+          ✖
+        </button>
+        {children}
+      </div>
+    </div>
   );
 };
 

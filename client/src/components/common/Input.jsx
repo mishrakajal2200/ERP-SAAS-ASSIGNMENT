@@ -1,28 +1,14 @@
-import { TextField } from "@mui/material";
+// src/components/common/Input.jsx
 
-const Input = ({
-  label,
-  type = "text",
-  value,
-  onChange,
-  error,
-  helperText,
-  fullWidth = true,
-  ...props
-}) => {
+const Input = ({ label, ...props }) => {
   return (
-    <TextField
-      label={label}
-      type={type}
-      value={value}
-      onChange={onChange}
-      error={!!error}
-      helperText={error || helperText}
-      fullWidth={fullWidth}
-      variant="outlined"
-      margin="normal"
-      {...props}
-    />
+    <div>
+      {label && <label className="text-sm text-gray-600">{label}</label>}
+      <input
+        {...props}
+        className="w-full mt-1 p-3 rounded-lg bg-white/30 backdrop-blur border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
   );
 };
 

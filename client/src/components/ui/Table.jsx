@@ -1,37 +1,30 @@
-import {
-  Table as MuiTable,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Paper,
-} from "@mui/material";
+// src/components/ui/Table.jsx
 
-const Table = ({ columns = [], data = [] }) => {
+const Table = ({ columns, data }) => {
   return (
-    <Paper sx={{ borderRadius: "12px", overflow: "hidden" }}>
-      <MuiTable>
-        <TableHead>
-          <TableRow>
-            {columns.map((col) => (
-              <TableCell key={col.field}>{col.headerName}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {data.map((row, index) => (
-            <TableRow key={index}>
-              {columns.map((col) => (
-                <TableCell key={col.field}>
-                  {row[col.field]}
-                </TableCell>
-              ))}
-            </TableRow>
+    <table className="w-full">
+      <thead>
+        <tr>
+          {columns.map((col) => (
+            <th key={col} className="text-left p-2">
+              {col}
+            </th>
           ))}
-        </TableBody>
-      </MuiTable>
-    </Paper>
+        </tr>
+      </thead>
+
+      <tbody>
+        {data.map((row, i) => (
+          <tr key={i} className="border-t">
+            {columns.map((col) => (
+              <td key={col} className="p-2">
+                {row[col.toLowerCase()]}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };
 

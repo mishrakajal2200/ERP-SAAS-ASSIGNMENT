@@ -1,3 +1,5 @@
+// src/hooks/useDebounce.js
+
 import { useState, useEffect } from "react";
 
 const useDebounce = (value, delay = 500) => {
@@ -9,7 +11,7 @@ const useDebounce = (value, delay = 500) => {
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [value, delay]);
+  }, [value]);
 
   return debounced;
 };
