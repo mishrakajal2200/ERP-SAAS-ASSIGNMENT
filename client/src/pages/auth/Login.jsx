@@ -39,45 +39,58 @@ const Login = () => {
 
   // HANDLE LOGIN
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      setLoading(true);
+  console.log("FORM STATE:", form);
 
-      const res = await loginUser(form);
+  try {
+    setLoading(true);
 
-      console.log("LOGIN RESPONSE:", res.data);
+    const payload = {
+      email: form.email,
+      password: form.password,
+    };
 
-      // BACKEND RESPONSE
-      const { token, user } = res.data.data;
+    console.log("SENDING PAYLOAD:", payload);
 
-      // SAVE TOKEN
-      localStorage.setItem("token", token);
+    const res = await loginUser(payload);
 
-      // SAVE TENANT ID
-      if (user?.companyId) {
-        localStorage.setItem(
-          "tenantId",
-          user.companyId
-        );
-      }
+    console.log("LOGIN RESPONSE:", res.data);
 
-      toast.success(
-        `Welcome back ${user?.name || ""} 🚀`
+    const { token, user } = res.data.data;
+
+    localStorage.setItem("token", token);
+
+    if (user?.companyId) {
+      localStorage.setItem(
+        "tenantId",
+        user.companyId
       );
-
-      navigate("/dashboard");
-    } catch (err) {
-      console.error(err);
-
-      toast.error(
-        err?.response?.data?.message ||
-          "Login failed"
-      );
-    } finally {
-      setLoading(false);
     }
-  };
+
+    toast.success(
+      `Welcome back ${user?.name || ""} 🚀`
+    );
+
+    navigate("/dashboard");
+
+  } catch (err) {
+    console.log("FULL ERROR:", err);
+    console.log("ERROR RESPONSE:", err?.response);
+    console.log(
+      "ERROR DATA:",
+      err?.response?.data
+    );
+
+    toast.error(
+      err?.response?.data?.message ||
+      "Login failed"
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div
@@ -295,6 +308,7 @@ const Login = () => {
                     <input
                       type="email"
                       name="email"
+                      autoComplete="email"
                       placeholder="Enter your email"
                       value={form.email}
                       onChange={handleChange}
@@ -333,6 +347,7 @@ const Login = () => {
                           : "password"
                       }
                       name="password"
+                      autoComplete="current-password"
                       placeholder="Enter your password"
                       value={form.password}
                       onChange={handleChange}
@@ -354,6 +369,7 @@ const Login = () => {
                     />
 
                     <button
+                      
                       type="button"
                       onClick={() =>
                         setShowPassword(
