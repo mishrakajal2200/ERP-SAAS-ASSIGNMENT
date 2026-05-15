@@ -29,31 +29,36 @@ export const registerCompany = async (data) => {
 };
 
 export const login = async ({ email, password }) => {
-  const user = await User.findOne({ email }).select("-password");
+  // FIND USER
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw new Error("Invalid credentials");
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  // CHECK PASSWORD
+  const isMatch = await bcrypt.compare(
+    password,
+    user.password
+  );
 
   if (!isMatch) {
     throw new Error("Invalid credentials");
   }
 
+  // GENERATE TOKEN
   const token = generateAccessToken({
     id: user._id,
     role: user.role,
     companyId: user.companyId,
   });
 
-  // ✅ convert to plain object
+  // CONVERT TO OBJECT
   const userObj = user.toObject();
 
-  // ✅ remove password
+  // REMOVE PASSWORD BEFORE SENDING
   delete userObj.password;
 
-  // ✅ IMPORTANT: return BOTH
   return {
     token,
     user: userObj,
