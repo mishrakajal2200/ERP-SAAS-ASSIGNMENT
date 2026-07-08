@@ -9,4 +9,5 @@ router.use(auth);
 router.get("/", controller.getCompany);
 router.put("/", controller.updateCompany);
 
+
 export default router;

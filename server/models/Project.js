@@ -3,7 +3,11 @@ import { PROJECT_STATUS } from "../constants/status.js";
 
 const projectSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
+    name: {
+      type: String,
+      required: true,
+    },
+
     description: String,
 
     status: {
@@ -17,8 +21,28 @@ const projectSchema = new mongoose.Schema(
       ref: "Company",
       required: true,
     },
+
+    // NEW
+
+    managerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    progress: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
+
+    dueDate: {
+      type: Date,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 export default mongoose.model("Project", projectSchema);

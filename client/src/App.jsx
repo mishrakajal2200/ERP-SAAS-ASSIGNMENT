@@ -1,13 +1,12 @@
 // src/App.jsx
-import AppRoutes from "./routes/AppRoutes";
-import { Toaster } from "react-hot-toast";
+
+import AppRoutes from "./routes/AppRoutes.jsx";
 
 const App = () => {
   return (
-    <>
+    <div>
       <AppRoutes />
-      <Toaster position="top-right" />
-    </>
+    </div>
   );
 };
 

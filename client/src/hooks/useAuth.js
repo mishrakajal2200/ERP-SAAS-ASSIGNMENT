@@ -1,9 +1,13 @@
-// src/hooks/useAuth.js
+import { useSelector } from "react-redux";
 
-export const useAuth = () => {
-  const token = localStorage.getItem("token");
+const useAuth = () => {
+  const { user, token } = useSelector((state) => state.auth);
 
   return {
+    user,
+    token,
     isAuthenticated: !!token,
   };
 };
+
+export default useAuth;

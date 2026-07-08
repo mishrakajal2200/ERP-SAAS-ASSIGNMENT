@@ -1,344 +1,321 @@
-// src/pages/auth/Login.jsx
-
 import { useState } from "react";
-import { loginUser } from "../../services/authService";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import { useDispatch,useSelector } from "react-redux";
+import { login } from "../../features/auth/authSlice";
+
 
 import {
-  FiMail,
-  FiLock,
-  FiArrowRight,
-  FiShield,
-  FiTrendingUp,
-  FiUsers,
-  FiEye,
-  FiEyeOff,
-} from "react-icons/fi";
+  Building2,
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  Briefcase,
+  TrendingUp,
+  Users,
+  Wallet,
+  Activity,
+  ShieldCheck,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(false);
+  const { loading } = useSelector(
+  (state) => state.auth
+);
 
-  const [showPassword, setShowPassword] =
-    useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
+    workspace: "",
     email: "",
     password: "",
   });
 
-  // HANDLE CHANGE
   const handleChange = (e) => {
-    setForm({
-      ...form,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
-  // HANDLE LOGIN
   const handleSubmit = async (e) => {
   e.preventDefault();
 
-  console.log("FORM STATE:", form);
+  if (
+    !formData.workspace ||
+    !formData.email ||
+    !formData.password
+  ) {
+    toast.error("Please fill all fields.");
+
+    return;
+  }
+
+  const loadingToast = toast.loading(
+    "Signing in..."
+  );
 
   try {
-    setLoading(true);
+    const result = await dispatch(
+      login(formData)
+    );
 
-    const payload = {
-      email: form.email,
-      password: form.password,
-    };
+    toast.dismiss(loadingToast);
 
-    console.log("SENDING PAYLOAD:", payload);
-
-    const res = await loginUser(payload);
-
-    console.log("LOGIN RESPONSE:", res.data);
-
-    const { token, user } = res.data.data;
-
-    localStorage.setItem("token", token);
-
-    if (user?.companyId) {
-      localStorage.setItem(
-        "tenantId",
-        user.companyId
+    if (login.fulfilled.match(result)) {
+      toast.success(
+        `Welcome back, ${result.payload.data.user.name}! 🎉`
       );
+
+      navigate("/dashboard");
+    } else {
+      toast.error(
+        result.payload ||
+          "Invalid email or password."
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        password: "",
+      }));
     }
-
-    toast.success(
-      `Welcome back ${user?.name || ""} 🚀`
-    );
-
-    navigate("/dashboard");
-
-  } catch (err) {
-    console.log("FULL ERROR:", err);
-    console.log("ERROR RESPONSE:", err?.response);
-    console.log(
-      "ERROR DATA:",
-      err?.response?.data
-    );
+  // eslint-disable-next-line no-unused-vars
+  } catch (error) {
+    toast.dismiss(loadingToast);
 
     toast.error(
-      err?.response?.data?.message ||
-      "Login failed"
+      "Something went wrong."
     );
-
-  } finally {
-    setLoading(false);
   }
 };
 
   return (
-    <div
-      className="
-        min-h-screen
-        relative
-        overflow-hidden
-        bg-[#030712]
-        flex
-        items-center
-        justify-center
-        px-6
-        py-10
-      "
-    >
-      {/* BACKGROUND EFFECTS */}
-      <div className="absolute inset-0">
-        {/* GRADIENT BLOBS */}
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-500/20 blur-3xl rounded-full" />
-
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-500/20 blur-3xl rounded-full" />
-
-        <div className="absolute top-[40%] left-[40%] w-[300px] h-[300px] bg-cyan-500/10 blur-3xl rounded-full" />
-
-        {/* GRID */}
-        <div
-          className="
-            absolute inset-0 opacity-[0.04]
-            [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)]
-            [background-size:60px_60px]
+    <div className="min-h-screen bg-[#020617] overflow-hidden">
+      <div className="flex min-h-screen flex-col lg:flex-row">
+        {/* LEFT SIDE */}
+        <div className="hidden lg:flex lg:w-3/5 relative overflow-hidden">
+          {/* Background Grid */}
+          <div
+            className="
+            absolute inset-0
+            bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),
+            linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
+            bg-[size:40px_40px]
           "
-        />
-      </div>
+          />
 
-      {/* CONTAINER */}
-      <div className="relative z-10 w-full max-w-7xl grid lg:grid-cols-2 gap-10 items-center">
-        {/* LEFT CONTENT */}
-        <div className="hidden lg:block">
-          <p className="uppercase tracking-[0.35em] text-indigo-300 text-sm mb-6">
-            MULTI TENANT ERP SAAS
-          </p>
+          {/* Glow */}
+          <div className="absolute -top-40 -left-20 h-[500px] w-[500px] rounded-full bg-blue-500/20 blur-[180px]" />
+          <div className="absolute bottom-0 right-0 h-[500px] w-[500px] rounded-full bg-cyan-500/20 blur-[180px]" />
 
-          <h1 className="text-6xl font-black leading-tight text-white">
-            Manage Your
-            <span className="block bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              Business Operations
-            </span>
-            Seamlessly
-          </h1>
-
-          <p className="text-gray-400 text-lg leading-relaxed mt-8 max-w-2xl">
-            Advanced ERP SaaS platform for managing
-            users, departments, projects, analytics,
-            tasks, and company operations with secure
-            tenant-based architecture.
-          </p>
-
-          {/* FEATURES */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-12">
-            {/* CARD */}
-            <div
-              className="
-                rounded-3xl
-                border border-white/10
-                bg-white/5
-                backdrop-blur-2xl
-                p-5
-              "
-            >
-              <div
-                className="
-                  w-14 h-14 rounded-2xl
-                  bg-indigo-500/15
-                  flex items-center justify-center
-                  text-indigo-400 text-2xl mb-4
-                "
-              >
-                <FiShield />
+          <div className="relative z-10 flex flex-col justify-between h-full w-full px-16 py-12">
+            {/* Logo */}
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-2xl bg-blue-600 flex items-center justify-center">
+                <Building2 className="text-white" />
               </div>
 
-              <h3 className="font-semibold text-white mb-2">
-                Secure Access
-              </h3>
+              <div>
+                <h1 className="text-3xl font-bold text-white">
+                  ERP Nexus
+                </h1>
 
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Tenant-isolated authentication and
-                enterprise-grade security.
+                <p className="text-slate-400">
+                  Multi-Tenant ERP Platform
+                </p>
+              </div>
+            </div>
+
+            {/* Hero */}
+            <div className="max-w-2xl">
+              <h2 className="text-5xl font-bold text-white leading-tight">
+                Manage Your Entire Business
+                <br />
+                From One Dashboard
+              </h2>
+
+              <p className="mt-6 text-xl text-slate-400 leading-relaxed">
+                HR, Payroll, CRM, Projects,
+                Inventory and Analytics unified
+                into one powerful enterprise platform.
               </p>
             </div>
 
-            {/* CARD */}
-            <div
-              className="
-                rounded-3xl
-                border border-white/10
-                bg-white/5
-                backdrop-blur-2xl
-                p-5
-              "
-            >
-              <div
-                className="
-                  w-14 h-14 rounded-2xl
-                  bg-purple-500/15
-                  flex items-center justify-center
-                  text-purple-400 text-2xl mb-4
-                "
-              >
-                <FiTrendingUp />
+            {/* Dashboard Preview */}
+            <div className="grid grid-cols-2 gap-6 max-w-4xl">
+              <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 hover:scale-105 transition">
+                <div className="flex items-center justify-between">
+                  <Wallet className="text-green-400" />
+                  <span className="text-green-400 text-sm">
+                    +18.4%
+                  </span>
+                </div>
+
+                <h3 className="mt-6 text-slate-400">
+                  Revenue
+                </h3>
+
+                <h2 className="text-4xl font-bold text-white mt-2">
+                  ₹12.4M
+                </h2>
               </div>
 
-              <h3 className="font-semibold text-white mb-2">
-                Analytics
-              </h3>
+              <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 hover:scale-105 transition">
+                <div className="flex items-center justify-between">
+                  <Users className="text-blue-400" />
+                  <span className="text-blue-400 text-sm">
+                    Active
+                  </span>
+                </div>
 
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Monitor company growth and team
-                productivity in real-time.
-              </p>
+                <h3 className="mt-6 text-slate-400">
+                  Employees
+                </h3>
+
+                <h2 className="text-4xl font-bold text-white mt-2">
+                  482
+                </h2>
+              </div>
+
+              <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 hover:scale-105 transition">
+                <div className="flex items-center justify-between">
+                  <Activity className="text-cyan-400" />
+                  <span className="text-cyan-400 text-sm">
+                    Live
+                  </span>
+                </div>
+
+                <h3 className="mt-6 text-slate-400">
+                  Attendance
+                </h3>
+
+                <h2 className="text-4xl font-bold text-white mt-2">
+                  96%
+                </h2>
+              </div>
+
+              <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 hover:scale-105 transition">
+                <div className="flex items-center justify-between">
+                  <TrendingUp className="text-violet-400" />
+                  <span className="text-violet-400 text-sm">
+                    Running
+                  </span>
+                </div>
+
+                <h3 className="mt-6 text-slate-400">
+                  Projects
+                </h3>
+
+                <h2 className="text-4xl font-bold text-white mt-2">
+                  18
+                </h2>
+              </div>
             </div>
 
-            {/* CARD */}
-            <div
-              className="
-                rounded-3xl
-                border border-white/10
-                bg-white/5
-                backdrop-blur-2xl
-                p-5
-              "
-            >
-              <div
-                className="
-                  w-14 h-14 rounded-2xl
-                  bg-cyan-500/15
-                  flex items-center justify-center
-                  text-cyan-400 text-2xl mb-4
-                "
-              >
-                <FiUsers />
-              </div>
-
-              <h3 className="font-semibold text-white mb-2">
-                Team Management
-              </h3>
-
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Manage employees, projects, and
-                departments effortlessly.
-              </p>
+            {/* Footer */}
+            <div className="flex gap-8 text-slate-400">
+              <span>✓ SOC2 Certified</span>
+              <span>✓ 256-bit Encryption</span>
+              <span>✓ 99.99% Uptime</span>
             </div>
           </div>
         </div>
 
-        {/* LOGIN CARD */}
-        <div className="flex justify-center lg:justify-end">
-          <div
-            className="
-              relative overflow-hidden
-              w-full max-w-xl
-              rounded-[32px]
-              border border-white/10
-              bg-white/[0.06]
-              backdrop-blur-3xl
-              shadow-[0_20px_80px_rgba(0,0,0,0.45)]
-              p-8 md:p-10
-            "
-          >
-            {/* GLOW */}
-            <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-500/20 blur-3xl rounded-full" />
-
-            <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-500/10 blur-3xl rounded-full" />
-
-            <div className="relative z-10">
-              {/* HEADER */}
-              <div className="mb-10">
-                <div
-                  className="
-                    w-20 h-20 rounded-3xl
-                    bg-gradient-to-br from-indigo-500 to-purple-600
-                    flex items-center justify-center
-                    text-white text-4xl
-                    shadow-2xl shadow-indigo-500/30
-                    mb-6
-                  "
-                >
-                  <FiShield />
-                </div>
-
-                <h2 className="text-4xl font-black text-white">
-                  Welcome Back
-                </h2>
-
-                <p className="text-gray-400 mt-3 leading-relaxed">
-                  Sign in to access your ERP SaaS
-                  workspace and manage your company
-                  operations securely.
-                </p>
+        {/* RIGHT SIDE */}
+        <div className="w-full lg:w-2/5 flex items-center justify-center px-6 py-10">
+          <div className="w-full max-w-md">
+            {/* Mobile Logo */}
+            <div className="lg:hidden text-center mb-10">
+              <div className="h-16 w-16 rounded-2xl bg-blue-600 flex items-center justify-center mx-auto">
+                <Building2 className="text-white" />
               </div>
 
-              {/* FORM */}
+              <h1 className="text-3xl font-bold text-white mt-4">
+                ERP Nexus
+              </h1>
+            </div>
+
+            {/* Card */}
+            <div className="backdrop-blur-2xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl">
+              <span className="inline-flex px-4 py-2 rounded-full bg-blue-500/20 text-blue-400 text-sm font-medium">
+                Secure Login
+              </span>
+
+              <h2 className="text-4xl font-bold text-white mt-6">
+                Welcome back 👋
+              </h2>
+
+              <p className="text-slate-400 mt-3">
+                Continue managing your organization,
+                employees and operations.
+              </p>
+
               <form
                 onSubmit={handleSubmit}
-                className="space-y-7"
+                className="space-y-5 mt-8"
               >
-                {/* EMAIL */}
+                {/* Workspace */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
-                    Email Address
+                  <label className="text-slate-300 text-sm">
+                    Workspace
                   </label>
 
-                  <div className="relative">
-                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+                  <div className="relative mt-2">
+                    <Briefcase
+                      size={18}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                    />
 
                     <input
-                      type="email"
-                      name="email"
-                      autoComplete="email"
-                      placeholder="Enter your email"
-                      value={form.email}
+                      type="text"
+                      name="workspace"
+                      value={formData.workspace}
                       onChange={handleChange}
-                      required
-                      className="
-                        w-full
-                        pl-12 pr-4 py-4
-                        rounded-2xl
-                        bg-white/5
-                        border border-white/10
-                        text-white
-                        placeholder:text-gray-500
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-indigo-500/40
-                        focus:border-indigo-500/40
-                        transition-all duration-300
-                      "
+                      placeholder="company-name"
+                      className="w-full h-14 bg-white/5 border border-white/10 rounded-xl pl-11 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
 
-                {/* PASSWORD */}
+                {/* Email */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                  <label className="text-slate-300 text-sm">
+                    Email
+                  </label>
+
+                  <div className="relative mt-2">
+                    <Mail
+                      size={18}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                    />
+
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="you@example.com"
+                      className="w-full h-14 bg-white/5 border border-white/10 rounded-xl pl-11 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label className="text-slate-300 text-sm">
                     Password
                   </label>
 
-                  <div className="relative">
-                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+                  <div className="relative mt-2">
+                    <Lock
+                      size={18}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                    />
 
                     <input
                       type={
@@ -347,122 +324,92 @@ const Login = () => {
                           : "password"
                       }
                       name="password"
-                      autoComplete="current-password"
-                      placeholder="Enter your password"
-                      value={form.password}
+                      value={formData.password}
                       onChange={handleChange}
-                      required
-                      className="
-                        w-full
-                        pl-12 pr-14 py-4
-                        rounded-2xl
-                        bg-white/5
-                        border border-white/10
-                        text-white
-                        placeholder:text-gray-500
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-indigo-500/40
-                        focus:border-indigo-500/40
-                        transition-all duration-300
-                      "
+                      placeholder="••••••••"
+                      className="w-full h-14 bg-white/5 border border-white/10 rounded-xl pl-11 pr-12 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
                     <button
-                      
                       type="button"
                       onClick={() =>
                         setShowPassword(
                           !showPassword
                         )
                       }
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
                     >
                       {showPassword ? (
-                        <FiEyeOff />
+                        <EyeOff size={18} />
                       ) : (
-                        <FiEye />
+                        <Eye size={18} />
                       )}
                     </button>
                   </div>
                 </div>
 
-                {/* OPTIONS */}
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-3 text-sm text-gray-400 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="accent-indigo-500"
-                    />
-
+                <div className="flex justify-between items-center text-sm">
+                  <label className="flex items-center gap-2 text-slate-400">
+                    <input type="checkbox" />
                     Remember me
                   </label>
 
                   <button
+                   
                     type="button"
-                    className="text-sm text-indigo-300 hover:text-indigo-200 transition"
+                    className="text-blue-400 hover:text-blue-300"
                   >
-                    Forgot Password?
+                  <Link to="/forgot-password">
+
+                   Forget Password?
+                  </Link>
                   </button>
                 </div>
 
-                {/* BUTTON */}
+                
+<p className="text-center text-sm text-slate-400 mt-6">
+  Don't have an account?{" "}
+  <Link
+    to="/register-company"
+    className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+  >
+    Sign up
+  </Link>
+</p>
                 <button
-                  type="submit"
-                  disabled={loading}
-                  className="
-                    group
-                    w-full
-                    flex items-center justify-center gap-3
-                    py-4
-                    rounded-2xl
-                    bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500
-                    hover:scale-[1.02]
-                    active:scale-[0.98]
-                    transition-all duration-300
-                    shadow-[0_15px_50px_rgba(99,102,241,0.35)]
-                    font-semibold
-                    text-white
-                    disabled:opacity-70
-                  "
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+type="submit"
+disabled={loading}
+className="
+w-full
+h-14
+rounded-xl
+bg-blue-600
+text-white
+font-semibold
+hover:bg-blue-700
+transition-all
+duration-300
+disabled:opacity-60
+disabled:cursor-not-allowed
+"
+>
+{loading
+  ? "Signing In..."
+  : "Continue to Dashboard →"}
+</button>
 
-                      Signing In...
-                    </>
-                  ) : (
-                    <>
-                      Access Dashboard
-
-                      <FiArrowRight className="group-hover:translate-x-1 transition-all duration-300" />
-                    </>
-                  )}
-                </button>
+                <div className="flex justify-center gap-6 text-xs text-slate-500 pt-3">
+                  <span>✓ SOC2</span>
+                  <span>✓ GDPR</span>
+                  <span>✓ Encrypted</span>
+                </div>
               </form>
 
-              {/* FOOTER */}
-              <div className="mt-10 text-center">
-                <p className="text-gray-400">
-                  Don’t have an account?{" "}
-
-                  <button
-                    onClick={() =>
-                      navigate("/register")
-                    }
-                    className="
-                      text-indigo-300
-                      hover:text-indigo-200
-                      font-semibold
-                      transition-all duration-300
-                    "
-                  >
-                    Create Account
-                  </button>
-                </p>
-              </div>
             </div>
+
+            <p className="text-center text-slate-500 text-sm mt-6">
+              Trusted by 500+ organizations worldwide
+            </p>
           </div>
         </div>
       </div>

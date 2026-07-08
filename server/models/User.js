@@ -11,7 +11,6 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-    
     password: {
       type: String,
       required: true,
@@ -29,8 +28,15 @@ const userSchema = new mongoose.Schema(
       ref: "Company",
       required: true,
     },
+
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpire: {
+      type: Date,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("User", userSchema);

@@ -5,5 +5,18 @@ export const getCompany = async (companyId) => {
 };
 
 export const updateCompany = async (companyId, data) => {
-  return await Company.findByIdAndUpdate(companyId, data, { new: true });
+  const updateData = {
+    name: data.name,
+    revenue: data.revenue,
+    subscription: data.subscription,
+  };
+
+  return await Company.findByIdAndUpdate(
+    companyId,
+    updateData,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 };

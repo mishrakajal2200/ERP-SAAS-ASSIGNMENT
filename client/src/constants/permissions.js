@@ -1,0 +1,45 @@
+import { ROLES } from "./roles";
+
+export const PERMISSIONS = {
+  CREATE_PROJECT: [
+    ROLES.ADMIN,
+    ROLES.MANAGER,
+  ],
+
+  UPDATE_PROJECT: [
+    ROLES.ADMIN,
+    ROLES.MANAGER,
+  ],
+
+  DELETE_PROJECT: [
+    ROLES.ADMIN,
+  ],
+
+  CREATE_TASK: [
+    ROLES.ADMIN,
+    ROLES.MANAGER,
+  ],
+
+  UPDATE_TASK: [
+    ROLES.ADMIN,
+    ROLES.MANAGER,
+    ROLES.EMPLOYEE,
+  ],
+
+  DELETE_TASK: [
+    ROLES.ADMIN,
+  ],
+
+  CREATE_USER: [
+    ROLES.ADMIN,
+  ],
+
+  VIEW_USERS: [
+    ROLES.ADMIN,
+    ROLES.MANAGER,
+  ],
+
+  CREATE_DEPARTMENT: [
+    ROLES.ADMIN,
+  ],
+};

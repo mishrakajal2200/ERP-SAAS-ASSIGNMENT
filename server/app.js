@@ -13,7 +13,8 @@ import activityLogRoutes from "./routes/activityLogRoutes.js";
 
 import errorHandler from "./middleware/errorMiddleware.js";
 import rateLimiter from "./middleware/rateLimiter.js";
-import swaggerUi from "swagger-ui-express";
+import swaggerUi from "swagger-ui-express"; 
+import dashboardRoutes from "./routes/dashboardRoutes.js"
 
 import fs from "fs";
 
@@ -46,6 +47,8 @@ app.use("/api/departments", departmentRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/logs", activityLogRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+
 
 // ❌ NOT FOUND ROUTE
 app.use((req, res) => {

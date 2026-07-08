@@ -1,94 +1,270 @@
-// src/routes/AppRoutes.jsx
 
-import { Routes, Route, Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
-// 🔐 Auth Pages
+// Layout
+import MainLayout from "../layouts/MainLayout";
+
+// Guards
+import PrivateRoute from "../guards/PrivateRoute";
+import AdminRoute from "../guards/AdminRoute";
+
+// ---------------- AUTH ----------------
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import ForgotPassword from "../pages/auth/ForgotPassword";
+import ResetPassword from "../pages/auth/ResetPassword";
 
-// 📊 Dashboard
+// ---------------- DASHBOARD ----------------
 import Dashboard from "../pages/dashboard/Dashboard";
+import DashboardHome from "../pages/dashboard/DashboardHome";
 import Analytics from "../pages/dashboard/Analytics";
+import Reports from "../pages/dashboard/Reports";
+import Calendar from "../pages/dashboard/Calendar";
 
-// 👤 Users
-import UserList from "../pages/users/UserList";
-import CreateUser from "../pages/users/CreateUser";
-import EditUser from "../pages/users/EditUser";
-
-// 🏢 Company
-import CompanyProfile from "../pages/companies/CompanyProfile";
-
-// 🏬 Departments
-import DepartmentList from "../pages/departments/DepartmentList";
-import CreateDepartment from "../pages/departments/CreateDepartment";
-
-// 📁 Projects
-import ProjectList from "../pages/projects/ProjectList";
+// ---------------- PROJECTS ----------------
+import Projects from "../pages/projects/Projects";
+import ProjectDetails from "../pages/projects/ProjectDetails";
 import CreateProject from "../pages/projects/CreateProject";
 import EditProject from "../pages/projects/EditProject";
-import ProjectDetails from "../pages/projects/ProjectDetails";
 
-// ✅ Tasks
-import TaskList from "../pages/tasks/TaskList";
+// ---------------- TASKS ----------------
+import Tasks from "../pages/tasks/Tasks";
+import TaskDetails from "../pages/tasks/TaskDetails";
 import CreateTask from "../pages/tasks/CreateTask";
-import TaskBoard from "../pages/tasks/TaskBoard";
 
-// 📜 Logs
-import ActivityLogs from "../pages/logs/ActivityLogs";
+// ---------------- USERS ----------------
+import Users from "../pages/users/Users";
+import CreateUser from "../pages/users/CreateUser";
+import UserProfile from "../pages/users/UserProfile";
 
-// 🧱 Layout
-import Layout from "../components/layout/Layout";
+// ---------------- DEPARTMENTS ----------------
+import Departments from "../pages/departments/Departments";
+import CreateDepartment from "../pages/departments/CreateDepartment";
 
-// 🔐 Route Guard
-import PrivateRoute from "./PrivateRoute";
+// ---------------- SETTINGS ----------------
+import Settings from "../pages/settings/Settings";
+import CompanySettings from "../pages/settings/CompanySettings";
+import ProfileSettings from "../pages/settings/ProfileSettings";
+
+// ---------------- NOTIFICATIONS ----------------
+import Notifications from "../pages/notifications/Notifications";
+
+// ---------------- ERRORS ----------------
+import Forbidden from "../pages/errors/Forbidden";
+import NotFound from "../pages/errors/NotFound";
+import ServerError from "../pages/errors/ServerError";
 
 const AppRoutes = () => {
   return (
     <Routes>
 
       {/* ================= PUBLIC ROUTES ================= */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
 
-      {/* ================= PROTECTED ROUTES ================= */}
-      <Route element={<PrivateRoute />}>
-        <Route element={<Layout />}>
+      <Route
+        path="/login"
+        element={<Login />}
+      />
 
-          {/* Dashboard */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/analytics" element={<Analytics />} />
+      <Route
+        path="/register-company"
+        element={<Register />}
+      />
 
-          {/* Users */}
-          <Route path="/users" element={<UserList />} />
-          <Route path="/users/create" element={<CreateUser />} />
-          <Route path="/users/edit/:id" element={<EditUser />} />
+      <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
+      />
 
-          {/* Company */}
-          <Route path="/company" element={<CompanyProfile />} />
+      <Route
+        path="/reset-password/:token"
+        element={<ResetPassword />}
+      />
 
-          {/* Departments */}
-          <Route path="/departments" element={<DepartmentList />} />
-          <Route path="/departments/create" element={<CreateDepartment />} />
+      {/* ================= PRIVATE ROUTES ================= */}
 
-          {/* Projects */}
-          <Route path="/projects" element={<ProjectList />} />
-          <Route path="/projects/create" element={<CreateProject />} />
-          <Route path="/projects/edit/:id" element={<EditProject />} />
-          <Route path="/projects/:id" element={<ProjectDetails />} />
+      <Route
+        element={
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
+        }
+      >
 
-          {/* Tasks */}
-          <Route path="/tasks" element={<TaskList />} />
-          <Route path="/tasks/create" element={<CreateTask />} />
-          <Route path="/tasks/board" element={<TaskBoard />} />
+        {/* Dashboard */}
 
-          {/* Logs */}
-          <Route path="/logs" element={<ActivityLogs />} />
+        <Route
+          path="/dashboard"
+          element={<Dashboard />}
+        />
 
-        </Route>
+        <Route
+          path="/dashboard/home"
+          element={<DashboardHome />}
+        />
+
+        <Route
+          path="/dashboard/analytics"
+          element={<Analytics />}
+        />
+
+        <Route
+          path="/dashboard/reports"
+          element={<Reports />}
+        />
+
+        <Route
+          path="/dashboard/calendar"
+          element={<Calendar />}
+        />
+
+        {/* Projects */}
+
+        <Route
+          path="/projects"
+          element={<Projects />}
+        />
+
+        <Route
+          path="/projects/:id"
+          element={<ProjectDetails />}
+        />
+
+        <Route
+          path="/projects/create"
+          element={
+            <AdminRoute>
+              <CreateProject />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/projects/edit/:id"
+          element={
+            <AdminRoute>
+              <EditProject />
+            </AdminRoute>
+          }
+        />
+
+        {/* Tasks */}
+
+        <Route
+          path="/tasks"
+          element={<Tasks />}
+        />
+
+        <Route
+          path="/tasks/:id"
+          element={<TaskDetails />}
+        />
+
+        <Route
+          path="/tasks/create"
+          element={<CreateTask />}
+        />
+
+        {/* Users */}
+
+        <Route
+          path="/users"
+          element={
+            <AdminRoute>
+              <Users />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/users/create"
+          element={
+            <AdminRoute>
+              <CreateUser />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={<UserProfile />}
+        />
+
+        {/* Departments */}
+
+        <Route
+          path="/departments"
+          element={<Departments />}
+        />
+
+        <Route
+          path="/departments/create"
+          element={
+            <AdminRoute>
+              <CreateDepartment />
+            </AdminRoute>
+          }
+        />
+
+        {/* Settings */}
+
+        <Route
+          path="/settings"
+          element={<Settings />}
+        />
+
+        <Route
+          path="/settings/company"
+          element={<CompanySettings />}
+        />
+
+        <Route
+          path="/settings/profile"
+          element={<ProfileSettings />}
+        />
+
+        {/* Notifications */}
+
+        <Route
+          path="/notifications"
+          element={<Notifications />}
+        />
+
       </Route>
 
-      {/* ================= DEFAULT ROUTE ================= */}
-      <Route path="*" element={<Navigate to="/dashboard" />} />
+      {/* ================= ERROR ROUTES ================= */}
+
+      <Route
+        path="/403"
+        element={<Forbidden />}
+      />
+
+      <Route
+        path="/500"
+        element={<ServerError />}
+      />
+
+      {/* ================= DEFAULT ================= */}
+
+      <Route
+        path="/"
+        element={
+          <Navigate
+            to="/dashboard"
+            replace
+          />
+        }
+      />
+
+      {/* ================= 404 ================= */}
+
+      <Route
+        path="*"
+        element={<NotFound />}
+      />
 
     </Routes>
   );

@@ -1,26 +1,29 @@
-// src/components/common/Button.jsx
-
 const Button = ({
   children,
-  onClick,
   type = "button",
+  onClick,
   className = "",
-  variant = "primary",
+  disabled = false,
 }) => {
-  const base =
-    "px-4 py-2 rounded-lg font-medium transition backdrop-blur";
-
-  const variants = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700",
-    secondary: "bg-white/20 text-white hover:bg-white/30",
-    danger: "bg-red-500 text-white hover:bg-red-600",
-  };
-
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`${base} ${variants[variant]} ${className}`}
+      disabled={disabled}
+      className={`
+        px-5 py-3
+        rounded-2xl
+        font-semibold
+        transition
+        duration-300
+        bg-gradient-to-r
+        from-cyan-500
+        to-blue-500
+        text-white
+        hover:scale-105
+        disabled:opacity-50
+        ${className}
+      `}
     >
       {children}
     </button>

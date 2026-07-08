@@ -1,14 +1,28 @@
-// src/components/common/Input.jsx
-
-const Input = ({ label, ...props }) => {
+const Input = ({
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  name,
+}) => {
   return (
-    <div>
-      {label && <label className="text-sm text-gray-600">{label}</label>}
-      <input
-        {...props}
-        className="w-full mt-1 p-3 rounded-lg bg-white/30 backdrop-blur border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      />
-    </div>
+    <input
+      type={type}
+      name={name}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      className="
+        w-full
+        px-4 py-3
+        rounded-2xl
+        bg-white/5
+        border border-white/10
+        outline-none
+        text-white
+        placeholder:text-slate-500
+      "
+    />
   );
 };
 
